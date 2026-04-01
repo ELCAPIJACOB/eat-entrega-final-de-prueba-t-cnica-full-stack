@@ -43,7 +43,8 @@ class _MisIncidenciasScreenState extends State<MisIncidenciasScreen> {
     } on ApiException catch (e) {
       if (mounted) setState(() { _error = e.message; _loading = false; });
     } catch (e) {
-      if (mounted) setState(() { _error = 'Error de conexión'; _loading = false; });
+      debugPrint('🚨 ERROR PARSEANDO: $e');
+      if (mounted) setState(() { _error = e.toString(); _loading = false; });
     }
   }
 

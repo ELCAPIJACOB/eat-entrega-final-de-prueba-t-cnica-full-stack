@@ -15,8 +15,8 @@ class Usuario {
     return Usuario(
       id: json['id'] as int,
       nombre: json['nombre'] as String,
-      email: json['email'] as String,
-      rol: json['rol'] as String,
+      email: json['email'] as String? ?? '',
+      rol: json['rol'] as String? ?? '',
     );
   }
 
