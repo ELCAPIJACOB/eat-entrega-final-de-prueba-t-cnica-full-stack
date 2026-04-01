@@ -44,8 +44,7 @@ class ApiService {
     }
 
     if (response.statusCode == 401) {
-      // Ojo: Si el token muere o es inválido, pateamos al usuario al Login
-      // TODO: Evaluar si a futuro metemos lógica de refresh token transparente aquí
+      // Si el token falló o expiró, lo regresamos a la pantalla de Login
       AuthService.instance.logout();
       import_router_and_navigate();
     }

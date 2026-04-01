@@ -7,7 +7,7 @@ import 'router/app_router.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // TODO: De momento lo forzamos a portrait, si luego nos piden soporte para iPads hay que quitar esto
+  // Bloquear orientación en vertical
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,

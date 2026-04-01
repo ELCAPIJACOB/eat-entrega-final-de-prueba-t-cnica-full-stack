@@ -20,16 +20,14 @@ app.use(helmet());
 
 // CORS: permite peticiones del front-end
 app.use(cors({
-  origin: '*', // TODO: Ojo, en producción cambiar estrictamente al dominio del frontend
-  // origin: ['https://nexgen-app.com', 'https://admin.nexgen-app.com'],
+  origin: '*', // Permitir conexión desde el emulador de Flutter
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
 // Logging de peticiones HTTP
 if (process.env.NODE_ENV !== 'test') {
-  // TODO: Si esto escala mucho, meter Winston para guardar los access.log en un archivo físico
-  app.use(morgan('dev'));
+  app.use(morgan('dev')); // Ver las peticiones en la consola
 }
 
 // Parseo de JSON
