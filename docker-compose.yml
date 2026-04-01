@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  # ──────────────────────────────────────────────────────────────────────────
+  # Base de datos PostgreSQL
+  # ──────────────────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:15-alpine
+    container_name: nexgen_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: nexgen_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+    ports:
+      - "5432:5432"
+    volumes:
+      - nexgen_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d nexgen_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # API NexGen (Node.js + Express)
+  # ──────────────────────────────────────────────────────────────────────────
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: nexgen_api
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: nexgen_db
+      DB_USER: postgres
+      DB_PASSWORD: postgres123
+      JWT_SECRET: nexgen_super_secret_jwt_key_2024
+      JWT_EXPIRES_IN: 24h
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: >
+      sh -c "
+        npx sequelize-cli db:migrate &&
+        npx sequelize-cli db:seed:all &&
+        node src/index.js
+      "
+
+volumes:
+  nexgen_pg_data:
+    driver: local

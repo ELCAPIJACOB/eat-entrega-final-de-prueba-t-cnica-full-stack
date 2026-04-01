@@ -1,0 +1,245 @@
+{
+  "info": {
+    "_postman_id": "nexgen-incidencias-api",
+    "name": "NexGen – API Gestión de Incidencias",
+    "description": "Colección completa de endpoints para el Sistema de Gestión y Reporte de Incidencias.\n\nCredenciales de prueba:\n- SUPERVISOR: supervisor@nexgen.com / Admin1234!\n- TÉCNICO: ana.tecnico@nexgen.com / Tecnico1234!\n- USUARIO: maria@nexgen.com / Usuario1234!",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000/api" },
+    { "key": "tokenSupervisor", "value": "" },
+    { "key": "tokenTecnico", "value": "" },
+    { "key": "tokenUsuario", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "🔐 Autenticación",
+      "item": [
+        {
+          "name": "Login – Supervisor",
+          "event": [{ "listen": "test", "script": { "exec": ["if (pm.response.code === 200) { const data = pm.response.json(); pm.collectionVariables.set('tokenSupervisor', data.data.token); console.log('Token supervisor guardado.'); }"] } }],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/login",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"supervisor@nexgen.com\",\n  \"password\": \"Admin1234!\"\n}" }
+          }
+        },
+        {
+          "name": "Login – Técnico (Ana)",
+          "event": [{ "listen": "test", "script": { "exec": ["if (pm.response.code === 200) { const data = pm.response.json(); pm.collectionVariables.set('tokenTecnico', data.data.token); }"] } }],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/login",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"ana.tecnico@nexgen.com\",\n  \"password\": \"Tecnico1234!\"\n}" }
+          }
+        },
+        {
+          "name": "Login – Usuario (María)",
+          "event": [{ "listen": "test", "script": { "exec": ["if (pm.response.code === 200) { const data = pm.response.json(); pm.collectionVariables.set('tokenUsuario', data.data.token); }"] } }],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/login",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"maria@nexgen.com\",\n  \"password\": \"Usuario1234!\"\n}" }
+          }
+        },
+        {
+          "name": "Login – Credenciales inválidas (401)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/login",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"no-existe@nexgen.com\",\n  \"password\": \"wrong\"\n}" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "👤 Usuario",
+      "item": [
+        {
+          "name": "Crear incidencia",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/usuario/incidencias",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{tokenUsuario}}" }],
+            "body": { "mode": "raw", "raw": "{\n  \"titulo\": \"Computadora no enciende\",\n  \"descripcion\": \"La PC del escritorio 14 no enciende desde esta mañana. Ya se intentó reiniciar sin éxito.\",\n  \"categoria\": \"Hardware\",\n  \"prioridad\": \"ALTA\"\n}" }
+          }
+        },
+        {
+          "name": "Listar mis incidencias",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/usuario/incidencias",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenUsuario}}" }]
+          }
+        },
+        {
+          "name": "Listar mis incidencias (filtro: ABIERTA)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/usuario/incidencias?estatus=ABIERTA",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenUsuario}}" }]
+          }
+        },
+        {
+          "name": "Ver detalle incidencia (con bitácora)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/usuario/incidencias/1",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenUsuario}}" }]
+          }
+        },
+        {
+          "name": "Agregar comentario",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/usuario/incidencias/1/comentarios",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{tokenUsuario}}" }],
+            "body": { "mode": "raw", "raw": "{\n  \"mensaje\": \"El problema persiste. Reinicié el servidor dos veces sin solución.\"\n}" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🔧 Técnico",
+      "item": [
+        {
+          "name": "Listar incidencias asignadas",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/tecnico/incidencias",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenTecnico}}" }]
+          }
+        },
+        {
+          "name": "Listar asignadas (filtro: EN_PROCESO)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/tecnico/incidencias?estatus=EN_PROCESO",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenTecnico}}" }]
+          }
+        },
+        {
+          "name": "Ver detalle incidencia asignada",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/tecnico/incidencias/1",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenTecnico}}" }]
+          }
+        },
+        {
+          "name": "Actualizar estatus (PATCH)",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/tecnico/incidencias/1",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{tokenTecnico}}" }],
+            "body": { "mode": "raw", "raw": "{\n  \"estatus\": \"RESUELTA\",\n  \"comentario\": \"Se liberó espacio en disco. El servidor SMTP está operativo al 100%.\"\n}" }
+          }
+        },
+        {
+          "name": "Agregar comentario (sin cambiar estatus)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/tecnico/incidencias/1/comentarios",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{tokenTecnico}}" }],
+            "body": { "mode": "raw", "raw": "{\n  \"mensaje\": \"Monitoreo durante 24h sin incidencias adicionales.\"\n}" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "👑 Admin / Supervisor",
+      "item": [
+        {
+          "name": "Listar todas las incidencias",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/admin/incidencias",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenSupervisor}}" }]
+          }
+        },
+        {
+          "name": "Filtrar por estatus + prioridad",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/admin/incidencias?estatus=EN_PROCESO&prioridad=CRITICA",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenSupervisor}}" }]
+          }
+        },
+        {
+          "name": "Filtrar por rango de fechas",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/admin/incidencias?fecha_desde=2024-01-01&fecha_hasta=2024-12-31",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenSupervisor}}" }]
+          }
+        },
+        {
+          "name": "Ver incidencias inactivas (soft-deleted)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/admin/incidencias?activo=false",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenSupervisor}}" }]
+          }
+        },
+        {
+          "name": "Asignar técnico a incidencia",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/admin/incidencias/3/asignar",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{tokenSupervisor}}" }],
+            "body": { "mode": "raw", "raw": "{\n  \"tecnico_id\": 2\n}" }
+          }
+        },
+        {
+          "name": "Actualizar incidencia (prioridad, categoría, etc.)",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/admin/incidencias/3",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{tokenSupervisor}}" }],
+            "body": { "mode": "raw", "raw": "{\n  \"prioridad\": \"CRITICA\",\n  \"categoria\": \"Software Crítico\"\n}" }
+          }
+        },
+        {
+          "name": "Soft delete incidencia (DELETE)",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/admin/incidencias/3",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenSupervisor}}" }]
+          }
+        },
+        {
+          "name": "Reportes generales",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/admin/reportes",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenSupervisor}}" }]
+          }
+        },
+        {
+          "name": "Reportes por rango de fechas",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/admin/reportes?fecha_desde=2024-01-01&fecha_hasta=2024-12-31",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenSupervisor}}" }]
+          }
+        }
+      ]
+    },
+    {
+      "name": "🩺 Health Check",
+      "item": [
+        {
+          "name": "GET /api – Health",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}"
+          }
+        }
+      ]
+    }
+  ]
+}
