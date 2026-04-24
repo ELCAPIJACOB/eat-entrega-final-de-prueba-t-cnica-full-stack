@@ -1,0 +1,10 @@
+.idea/
+.vs/
+*.txt
+*.log
+node_modules/
+build/
+.dart_tool/
+.flutter-plugins*
+.pub/
+.pub-cache/
