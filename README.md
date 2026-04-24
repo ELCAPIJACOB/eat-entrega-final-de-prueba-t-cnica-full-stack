@@ -1,4 +1,4 @@
-# 🚀 NexGen – Sistema de Gestión y Reporte de Incidencias
+# – Sistema de Gestión y Reporte de Incidencias
 
 > Prueba Técnica Full Stack – Flutter Mobile + Node.js/Express/PostgreSQL
 
